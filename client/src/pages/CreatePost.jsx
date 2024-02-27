@@ -32,9 +32,43 @@ const CreatePost = () => {
   };
   
 
-  const generateImage = () =>{
+  const generateImage = async () => {
+    if (form.prompt) {
+      try {
+        setGeneratingImg(true);
+  
+        const response = await fetch('https://api.openai.com/v1/images/generations', {
+          method: 'POST', 
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization:
+            "Bearer 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"
+          },
+          body: JSON.stringify({
+            prompt: form.prompt,
+          }),
+        });
+  
+        if (response.ok) {
+          const data = await response.json();
+          setForm({ ...form, photo: data.data[0].url });
+        } else {
+          console.error('Failed to generate image:', response.statusText);
+          alert('Something went wrong while generating image. Please try again.');
+        }
+      } catch (err) {
+        console.error('Error while generating image:', err);
+        alert('Something went wrong while generating image. Please try again.');
+      } finally {
+        setGeneratingImg(false);
+      }
+    } else {
+      alert('Please provide a proper prompt');
+    }
+  };
+  
 
-  }
+
 
   return (
     <section className='max-w-7xl mx-auto '>
