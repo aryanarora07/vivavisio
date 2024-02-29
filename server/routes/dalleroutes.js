@@ -1,10 +1,12 @@
 import express from 'express';
-import axios from 'axios';
 import * as dotenv from 'dotenv';
+import OpenAI from "openai";
 
 dotenv.config();
 
 const router = express.Router();
+
+const openai = new OpenAI();
 
 router.route('/').get((req, res) => {
   res.status(200).json({ message: 'Hello from DALL-E!' });
@@ -12,27 +14,21 @@ router.route('/').get((req, res) => {
 
 router.route('/').post(async (req, res) => {
   try {
-    console.log('first')
     const { prompt } = req.body;
 
-    const response = await axios.post('http://localhost:8080/api/v1/dalle', {
-      prompt,
+    const response = await openai.images.generate({
+      model: "dall-e-3",
+      prompt: prompt,
       n: 1,
-      size: '1024x1024',  // Adjust the size as needed
+      size: "1024x1024", 
+      quality: "hd"
     });
 
-    if (response.status === 200) {
-      const responseData = response.data;
-      const image = responseData.photo;
-      console.log(response);
-      res.status(200).json({ photo: image });
-    } else {
-      console.error(response.statusText);
-      res.status(response.status).send(response.data.error.message || 'Something went wrong');
-    }
+    const image = response.data[0].url;
+    res.status(200).json({ photo: image });
   } catch (error) {
     console.error(error);
-    res.status(500).send('Something went wrong');
+    res.status(500).send(error?.response.data.error.message || 'Something went wrong');
   }
 });
 
