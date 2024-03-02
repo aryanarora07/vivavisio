@@ -17,7 +17,9 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: 'https://vivavisio.vercel.app'
+}));
 app.use(express.json({ limit: '50mb' }));
 
 
