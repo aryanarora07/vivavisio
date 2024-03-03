@@ -8,8 +8,7 @@
     ],
     "headers": [
         {
-          "source": "/api/(.*)",
-          "dest": "/",
+          "src": "/(.*)",
           "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],              
           "headers": [
             { "key": "Access-Control-Allow-Credentials", "value": "true" },
